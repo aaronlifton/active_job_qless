@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'activejob_qless/version'
+require 'active_job_qless/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "activejob_qless"
-  spec.version       = ActivejobQless::VERSION
+  spec.name          = "active_job_qless"
+  spec.version       = ActiveJobQless::VERSION
   spec.authors       = ["Aaron Lifton"]
   spec.email         = ["aaronlifton@gmail.com"]
 
   spec.summary       = %q{Rails ActiveJob adapter for Qless}
   spec.description   = %q{Rails ActiveJob adapter for Qless}
-  spec.homepage      = "https://github.com/aaronlifton2/activejob_qless"
+  spec.homepage      = "https://github.com/aaronlifton2/active_job_qless"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
