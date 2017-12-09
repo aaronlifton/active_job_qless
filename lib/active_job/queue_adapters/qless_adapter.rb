@@ -32,11 +32,14 @@ module ActiveJob
       end
 
       class JobWrapper #:nodoc:
-        include Qless::Workers::BaseWorker
+        def worker
+          @worker ||= Qless::Workers::BaseWorker
+        end
 
         def perform(job_data)
-          Base.execute job_data.merge("provider_job_id" => jid)
+          worker.execute job_data.merge("provider_job_id" => jid)
         end
       end
+    end
   end
 end
