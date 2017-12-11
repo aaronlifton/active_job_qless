@@ -6,13 +6,21 @@ module ActiveJob
     class QlessAdapter
 
       def client
-        @client ||= QlessClient
-        raise RuntimeError, "QlessClient must be defined" unless @client
-        @client
+        if @client
+          @client
+        else
+          unless defined?(::QlessClient)
+            redis_uri = URI(ENV['REDIS_URI'])
+            options = {:host => redis_uri.host, :port => redis_uri.port}
+            ::QlessClient ||= Qless::Client.new(options)
+            raise RuntimeError, "QlessClient must be defined" if !::QlessClient
+          end
+          @client ||= ::QlessClient
+        end
       end
 
       def enqueue(job) #:nodoc:
-        queue = @client.queues[job.queue_name]
+        queue = client.queues[job.queue_name]
         job.provider_job_id = queue.put(
           job.class,
           job.serialize["arguments"],
@@ -22,7 +30,7 @@ module ActiveJob
 
       def enqueue_at(job, timestamp) #:nodoc:
         delay = (timestamp - Time.current.to_f).to_i
-        queue = @client.queues[job.queue_name]
+        queue = client.queues[job.queue_name]
         job.provider_job_id = queue.put(
           job.class,
           job.serialize["arguments"],
@@ -33,7 +41,7 @@ module ActiveJob
 
       class JobWrapper #:nodoc:
         def worker
-          @worker ||= Qless::Workers::BaseWorker
+          @worker ||= ::Qless::Workers::BaseWorker
         end
 
         def perform(job_data)
