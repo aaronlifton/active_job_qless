@@ -6,17 +6,7 @@ module ActiveJob
     class QlessAdapter
 
       def client
-        if @client
-          @client
-        else
-          unless defined?(::QlessClient)
-            redis_uri = URI(ENV['REDIS_URI'])
-            options = {:host => redis_uri.host, :port => redis_uri.port}
-            ::QlessClient ||= Qless::Client.new(options)
-            raise RuntimeError, "QlessClient must be defined" if !::QlessClient
-          end
-          @client ||= ::QlessClient
-        end
+        @client ||= ActiveJobQless.worker.client
       end
 
       def enqueue(job) #:nodoc:
